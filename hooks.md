@@ -101,4 +101,54 @@ const x = star.thisDirection; // undefined
 x() // 直接调用
 // 类中所有的方法，在局部默认开启了严格模式，它不敢指向 window 所以指向了 undefined
 ````
+## 副作用
+不是发生在数据向视图转化中的逻辑，比如：ajax请求、访问原生dom元素、本地持久化存储、设置定时器、日志记录等，以前这些副作用都是写在类组件生命周期函数中的  
+useEffect在全部渲染完毕之后才会执行，useLayoutEffect会在浏览器layout之后，painting之前执行  
+## useState
+````js
+/*
+  入参：状态初始值
+  返回：一个数组，数组元素1是当前state的值，元素2是设置新的值时使用的一个set函数
+*/
+
+// 点击按钮实现数字加减
+export default function CounterHook(){
+    const [count, setCountState] = useState(0)
+    return (
+        <div>
+           <h1>当前计数：{count} </h1>
+           <button onClick={e=>setState(count+1)}>+1</button>
+           <button onClick={e=>setState(count-1)}>-1</button>
+        </div>
+    )
+}
+````
+````js
+// 怎么修改state，如果初始状态是一个数组，是直接push?
+// react更改state，不是直接在原数据上进行修改，这样不会引起页面的重新渲染，更多时候这将这个数据做一个拷贝，在这个拷贝的数据上进行操作，之后再赋给原数据，覆盖上去
+
+const [names, setNames] = useState(['mike','john'])
+// right case
+return (
+    <ul>
+        <li>
+            {
+              names.map((name)=>{
+                  return <li>{name}</li>
+              })
+            }
+        </li>
+        <button onClick={e=>setNames([...names,"tom"])}>添加数据</button>
+    </ul>
+)
+
+// error case
+function addName(){
+    // 这样是无法引起页面重新渲染的，react根据这次设置的值和当前state的值做比较，不相等才重新渲染
+    names.push('lihua') // 这里直接push，直接改变了原state
+    setNames(names) // 设置的值跟当前state的值一样了
+}
+<button onClick={addName}>添加数据</button>
+````
+
 
