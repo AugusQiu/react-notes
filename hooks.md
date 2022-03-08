@@ -152,3 +152,36 @@ function addName(){
 ````
 
 
+## useEffect
+react用Effect来使用生命周期，你可以把useEffect Hook看做是componentDidMount、componentDidUpdate、componentWillUnmount这三个函数的组合  
+````js
+export default HookEffect = () => {
+  const [count, setCount] = useState(0)
+  // useEffect(()=>{
+  //    document.title = `You clicked ${count} times`
+  // })
+
+  // 相当于componentDidMount 和 componentDidUpdate的结合体
+  // 因为组件每次render都会调用useEffect，react基于此做了优化（另外指明一个数组参数）
+  useEffect(() => {
+    console.log('初始化 & 更新后')
+    document.title = `You clicked ${count} times`
+    // 如果需要使用componentWillUnmount，则要在内部return一个函数
+    return () => {
+         // 这里相当于componentWillUnmount生命周期（组件销毁）  
+    }
+  }, [count]) // 只有当count这个变量在更新的时候才进行重新渲染，避免无效更新，因为可能渲染的dom跟多个state关联
+
+  function addCount(count){
+     count += 1
+     return count
+  }
+
+  return (
+      <div>
+          <h1>{count}</h1>
+          <button onClick={()=>setCount(addCount(count))}>点击增加</button>
+      </div>
+  )
+}
+````
